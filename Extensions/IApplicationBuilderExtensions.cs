@@ -21,7 +21,7 @@ public static class IApplicationBuilderExtensions
     {
         app.UseEndpoints(config =>
         {
-            config.MapRazorPages();
+            //config.MapRazorPages();
             config.MapHub<DesktopHub>("/hubs/desktop");
             config.MapHub<ViewerHub>("/hubs/viewer");
         });
