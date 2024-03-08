@@ -10,12 +10,6 @@ namespace Gizmo.RemoteControl.Server
     public static class Registrations
     {
         public static IServiceCollection AddRemoteControlServer(this IServiceCollection services) => services
-            //.AddCors(options => options.AddPolicy("RemoteControlServer", policy =>
-            //    policy
-            //        .AllowAnyOrigin()
-            //        .AllowAnyMethod()
-            //        .AllowAnyHeader()
-            //        .AllowCredentials()))
             .AddRemoteControlServer(config =>
             {
                 config.AddHubEventHandler<HubEventHandler>();
@@ -38,11 +32,10 @@ namespace Gizmo.RemoteControl.Server
         /// <param name="app"></param>
         /// <returns></returns>
         public static IApplicationBuilder UseRemoteControlServer(this IApplicationBuilder app) => app
-            //.UseCors("RemoteControlServer")
-            .UseEndpoints(config =>
+            .UseEndpoints(server =>
             {
-                config.MapHub<DesktopHub>("/hubs/desktop");
-                config.MapHub<ViewerHub>("/hubs/viewer");
+                server.MapHub<DesktopHub>("/hubs/desktop");
+                server.MapHub<ViewerHub>("/hubs/viewer");
             });
     }
 }
