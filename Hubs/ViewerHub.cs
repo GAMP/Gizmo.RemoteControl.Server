@@ -60,17 +60,17 @@ public class ViewerHub : Hub<IViewerHubClient>
         }
     }
 
-    private RemoteControlSession SessionInfo
+    private RemoteControl.Server.Models.RemoteControlSession SessionInfo
     {
         get
         {
             if (Context.Items.TryGetValue(nameof(SessionInfo), out var result) &&
-                result is RemoteControlSession session)
+                result is RemoteControl.Server.Models.RemoteControlSession session)
             {
                 return session;
             }
 
-            var newSession = new RemoteControlSession();
+            var newSession = new RemoteControl.Server.Models.RemoteControlSession();
             Context.Items[nameof(SessionInfo)] = newSession;
             return newSession;
         }
