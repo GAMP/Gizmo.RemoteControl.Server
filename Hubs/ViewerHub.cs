@@ -1,7 +1,6 @@
 ﻿using Gizmo.RemoteControl.Server.Abstractions;
 using Gizmo.RemoteControl.Server.Enums;
 using Gizmo.RemoteControl.Server.Filters;
-using Gizmo.RemoteControl.Server.Models;
 using Gizmo.RemoteControl.Server.Services;
 using Gizmo.RemoteControl.Shared;
 using Gizmo.RemoteControl.Shared.Enums;
@@ -172,14 +171,19 @@ public class ViewerHub : Hub<IViewerHubClient>
     }
     public async Task<Result> SendScreenCastRequestToDevice(string sessionId, string accessKey, string requesterName)
     {
-        if (string.IsNullOrWhiteSpace(sessionId))
-        {
-            return Result.Fail("Session ID cannot be empty.");
-        }
+        Models.RemoteControlSession session;
 
-        if (!_desktopSessionCache.TryGetValue(sessionId, out var session))
+        int attempts = 10;
+        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
+        
+        while (!_desktopSessionCache.TryGetValue(sessionId, out session!))
         {
-            return Result.Fail("Session ID not found.");
+            attempts--;
+
+            if (attempts > 0)
+                await timer.WaitForNextTickAsync();
+            else
+                return Result.Fail("The host is not available.");
         }
 
         if (session.Mode == RemoteControlMode.Unattended &&
